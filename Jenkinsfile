@@ -14,7 +14,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'composer install --no-dev --optimize-autoloader'
+                sh 'docker run --rm -v $PWD:/app -w /app composer install --no-dev --optimize-autoloader'
             }
         }
 
