@@ -1,26 +1,42 @@
-pipeline {     
-    agent any     
+pipeline {
+    agent any
 
-    stages {         
-        stage('Build') {             
-            steps {                 
-                echo 'Building...' 
-                // Tambahkan perintah build di sini             
-            }         
-        }         
+    environment {
+        CI_ENVIRONMENT = 'develop'
+    }
 
-        stage('Test') {             
-            steps {                 
-                echo 'Testing...' 
-                // Tambahkan perintah test di sini             
-            }         
-        }         
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/fairulmuhammadcodeigniter4.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Installing dependencies...'
+                sh 'composer install'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'vendor/bin/phpunit'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying CodeIgniter 4...'
+                sh 'cp -r * /var/www/html/'
+            }
+        }
+    }
 
-        stage('Deploy') {             
-            steps {                 
-                echo 'Deploying...' 
-                // Tambahkan perintah deploy di sini             
-            }         
-        }     
-    } 
+    post {
+        success {
+            echo '✅ Pipeline executed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed!'
+        }
+    }
 }
